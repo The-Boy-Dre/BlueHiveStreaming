@@ -177,3 +177,27 @@ Video Streaming: react-native-video.
 
 web scrappers can roate their ip addresses via residential proxy networks making it look like  the traffic is from actual users
 
+I will leave glob at version 7.2.3 as thats the version used by the react-native0tvos dependencies,
+Any more code needed for glob's development on my part will make use of the latest version
+
+Should axios be removed from the fron't end's package.json?
+
+
+node server.js
+
+4.2 Connecting Your Fire TV for Testing
+Enable Developer Options on Fire TV:
+Go to Settings > My Fire TV > Developer Options and enable ADB Debugging and Apps from Unknown Sources.
+Find Your Fire TV’s IP Address:
+(Under Settings > Network.)
+Connect via ADB in PowerShell:
+
+adb connect <FIRE_TV_IP>:5555
+
+verify devices:
+adb devices
+
+
+Running the Frontend (React Native TVOS App)
+
+npx react-native run-android

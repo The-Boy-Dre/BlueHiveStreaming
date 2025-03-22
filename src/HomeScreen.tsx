@@ -1,3 +1,6 @@
+//! This file fetches a list of movies (from your backend) and handles remote events:
+
+
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Button, StyleSheet, useTVEventHandler } from 'react-native';
 import axios from 'axios';
