@@ -12,7 +12,7 @@ npm install ts-node --save-dev
 
 
 ============================================================================================================================
-=== To RUN ===
+=== To RUN on Fire Stick ===
 ============================================================================================================================
 see these  steps:
 1.  enter command in in the backend's directory: "node server.js"
@@ -54,6 +54,54 @@ Caching: lru-cache.
 HTTP Requests: Axios.
 
 Video Streaming: react-native-video.
+
+
+============================================================================================================================
+Past Bug fixes
+============================================================================================================================
+C:\DevProjects\BlueHiveStreaming>npx react-native run-android
+info Launching emulator...
+info Successfully launched emulator.
+info Installing the app...
+> Task :gradle-plugin:settings-plugin:pluginDescriptors FAILED
+2 actionable tasks: 2 executed
+
+info 💡 Tip: Make sure that you have set up your development environment correctly, by running npx react-native doctor. To read more about doctor command visit: https://github.com/react-native-community/cli/blob/main/packages/cli-doctor/README.md#doctor
+
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':gradle-plugin:settings-plugin:pluginDescriptors'.
+> Unable to delete directory 'C:\DevProjects\BlueHiveStreaming\node_modules\@react-native\gradle-plugin\settings-plugin\build\pluginDescriptors'
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 7s
+error Failed to install the app. Command failed with exit code 1: gradlew.bat app:installDebug -PreactNativeDevServerPort=8081 FAILURE: Build failed with an exception. * What went wrong: Execution failed for task ':gradle-plugin:settings-plugin:pluginDescriptors'. > Unable to delete directory 'C:\DevProjects\BlueHiveStreaming\node_modules\@react-native\gradle-plugin\settings-plugin\build\pluginDescriptors' * Try: > Run with --stacktrace option to get the stack trace. > Run with --info or --debug option to get more log output. > Run with --scan to get full insights. > Get more help at https://help.gradle.org. BUILD FAILED in 7s.
+info Run CLI with --verbose flag for more details.
+
+The error appeared because your project retained references to the old directory path (C:\Users\TheMo\OneDrive\...) in cached or generated Gradle and npm metadata after you moved the project. Deleting node_modules and package-lock.json cleared these stale references, and running npm install regenerated correct metadata reflecting your new directory (C:\DevProjects\BlueHiveStreaming). The gradlew clean then removed residual build artifacts, fully resetting your build environment. This sequence corrected all outdated paths, resolving the deprecation warning and build failure.
+
+1)
+cd C:\DevProjects\BlueHiveStreaming
+rd /s /q node_modules
+
+2)
+del package-lock.json
+npm install
+
+3)
+cd android
+gradlew.bat clean
+cd ..
+npx react-native run-android
+
+
 
 ============================================================================================================================
 === To Uninstall ClI ===
