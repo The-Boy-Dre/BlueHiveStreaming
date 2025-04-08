@@ -27,33 +27,37 @@ type DetailsScreenProps = {
   route: DetailsScreenRouteProp;
 };
 
+
+
+
+
 const DetailsScreen = ({ route }: DetailsScreenProps) => {
-  const { detailId } = route.params;
-  const [movie, setMovie] = useState<Movie | null>(null);
+    const { detailId } = route.params;
+    const [movie, setMovie] = useState<Movie | null>(null);
 
-  useEffect(() => {
-    const fetchMovie = async () => {
-      const response = await axios.get<Movie>(`http://your-backend-api/movies/${detailId}`);
-      setMovie(response.data);
-    };
+    useEffect(() => {
+      const fetchMovie = async () => {
+        const response = await axios.get<Movie>(`http://your-backend-api/movies/${detailId}`);
+        setMovie(response.data);
+      };
 
-    fetchMovie();
-  }, [detailId]);
+      fetchMovie();
+    }, [detailId]);
 
-  if (!movie) {
-    return <Text>Loading...</Text>;
-  }
+    if (!movie) {
+      return <Text>Loading...</Text>;
+    }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{movie.title}</Text>
-      <Video
-        source={{ uri: movie.videoUrl }}
-        controls={true}
-        style={styles.video}
-      />
-    </View>
-  );
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>{movie.title}</Text>
+        <Video
+          source={{ uri: movie.videoUrl }}
+          controls={true}
+          style={styles.video}
+        />
+      </View>
+    );
 };
 
 const styles = StyleSheet.create({

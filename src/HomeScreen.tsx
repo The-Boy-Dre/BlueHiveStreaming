@@ -2,7 +2,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Button, StyleSheet, useTVEventHandler } from 'react-native';
+import { View, FlatList, Button, StyleSheet, useTVEventHandler, Text } from 'react-native';
 import axios from 'axios';
 import { LRUCache } from 'lru-cache';
 import { NavigationProp } from '@react-navigation/native';
@@ -53,7 +53,7 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      {/* <FlatList
         data={movies}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -62,16 +62,20 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
             onPress={() => navigation.navigate('Movie', { movieId: item.id })}
           />
         )}
-      />
+      /> */}
+
+      <Text style={styles.title}>BlueHive Streaming App</Text>
+      <Text style={styles.subtitle}>Welcome to your app!</Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-  },
+    flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#000' },
+    title: { color: '#fff', fontSize: 36, fontWeight: 'bold' },
+    subtitle: { color: '#aaa', fontSize: 20 }
 });
+
 
 export default HomeScreen;

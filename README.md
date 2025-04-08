@@ -55,6 +55,13 @@ HTTP Requests: Axios.
 
 Video Streaming: react-native-video.
 
+Without a navigation solution, your app becomes a single-screen application. For any non-trivial app like:
+- A movie streaming app 📺
+- A shopping app 🛒
+- A messenger/chat app 💬
+- A file browser 📁
+…you need navigation to swap between different views and maintain a proper app state.
+
 
 ============================================================================================================================
 Past Bug fixes
