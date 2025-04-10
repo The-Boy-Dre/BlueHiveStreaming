@@ -111,10 +111,18 @@ npx react-native run-android
 
 
 ============================================================================================================================
-=== To Uninstall ClI ===
+=== maintenance ===
 ============================================================================================================================
+( Clean developemnt environment )
 1. npm uninstall -g react-native-cli
 2. npm cache clean --force
+
+( Clean android emulation environemnt )
+1. naigate to C:\DevProjects\BlueHiveStreaming\android> 
+2. run .\gradlew clean
+3. navigate to C:\DevProjects\BlueHiveStreaming>  with "cd.."
+4. run npx react-native run-android
+
 
 
 

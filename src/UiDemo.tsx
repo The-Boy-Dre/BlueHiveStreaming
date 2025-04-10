@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 
 
-const OptionsBar = () => {
+const UiDemo = () => {
   const [alignContent, setAlignContent] = useState('flex-start');
 
     return (
@@ -101,4 +101,4 @@ const OptionsBar = () => {
         },
   });
 
-  export default OptionsBar;
+  export default UiDemo;
