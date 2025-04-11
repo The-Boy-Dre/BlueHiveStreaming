@@ -8,7 +8,7 @@ import axios from 'axios';
 
 
 
-const API_KEY = '3e0cc630f4bb507ea777e9713825db68'; // or your real key
+const API_KEY = '09043a3c24de9d07b1d0f710f1b29a3d'; // or your real key
 const BASE_URL = `https://api.themoviedb.org/3/trending/movie/day?api_key=${API_KEY}`;
 
 const BrowseScreen = () => {

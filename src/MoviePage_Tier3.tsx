@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
 import { Dimensions } from 'react-native';
 
 
@@ -12,30 +12,33 @@ const numColumns = 6;   // your desired number of columns
 const posterWidth = (screenWidth - posterMargin * 2 * numColumns) / numColumns;
 
 
-  export type Movie = {
-    id: number;
-    title: string;
-    release_date: string;
-    poster_path: string;
-  };
-  
+export type Movie = {
+  id: number;
+  title: string;
+  release_date: string;
+  poster_path: string;
+};
 
-  type Props = {
-    data: Movie[];
-    onEndReached: () => void;
-  };
+type Props = {
+  data: Movie[];
+  onEndReached: () => void;
+};
 
 
 
 const MoviePage: React.FC<Props> = ({ data, onEndReached })=> {
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null); // Naviagtion 
   
-  const renderItem = ({ item }: { item: Movie }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: IMAGE_BASE_URL + item.poster_path }} style={styles.poster} resizeMode="cover"/>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.date}>{item.release_date?.split('-')[0]}</Text>
-    </View>
+  const renderItem = ({ item, index }: { item: Movie; index: number }) => (
+    <Pressable style={[ styles.posterContainer, focusedIndex === index && styles.focusedPoster ]} onFocus={() => setFocusedIndex(index)}  onBlur={() => setFocusedIndex(null)}>
+
+        <Image source={{ uri: IMAGE_BASE_URL + item.poster_path }} style={styles.poster} resizeMode="cover"/>
+        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.date}>{item.release_date?.split('-')[0]}</Text>
+
+    </Pressable>
   );
+
 
   return (
     <FlatList
@@ -57,15 +60,20 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
   },
-  card: {
+  posterContainer: {
     width: posterWidth,
     margin: posterMargin,
     marginLeft: 1,
     alignItems: 'center',
   },
+  focusedPoster: {
+    borderWidth: 3,
+    borderColor: 'gold',
+    borderRadius: 8,
+  },
   poster: {
     width: '100%',
-    height: 200,
+    height:200,
     borderRadius: 8,
   },
   title: {

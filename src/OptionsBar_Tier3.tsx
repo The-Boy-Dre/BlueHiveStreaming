@@ -1,46 +1,44 @@
-import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
-
-
-
-
+import React, { useRef, useState } from 'react';
+import {  View, TextInput, StyleSheet, Text,  Image, Pressable} from 'react-native';
 
 
 const OptionsBar = () => {
-
-  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>('Movies');
+  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // ensures that activeTab can only be either of two string values, 'movies' or 'tvshows'
+  const [focused, setFocused] = useState<string | null>(null); //This initializes a state value with a type annotation. The state can hold either a string or null. By passing null as the initial value, you're indicating that the default state is null
+  const searchInputRef = useRef<TextInput>(null);
+  
 
   return (
     <View style={styles.container}>
-          <TouchableOpacity style={styles.menuButton} onPress={() => console.log('Open popup')}>
-            {/* Placeholder icon/text; you can replace with an actual icon component */}
+
+        <Pressable  onPress={() => console.log('Open popup')} onFocus={() => setFocused('menu')} onBlur={() => setFocused(null)} style={[styles.menuButton, focused === 'menu' && styles.focusedOutline]}>
             <Text style={styles.menuIcon}>≡</Text>
-          </TouchableOpacity>
+        </Pressable>
 
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search"
-            placeholderTextColor="#aaa"
-          />
+        {/* Since you're working on Fire TV navigation with focus borders, Pressable is the right choice for you! Introduced in React Native 0.63+  Handles TV remote focus (perfect for your Fire TV app).*/}
+        <Pressable  onPress={() => searchInputRef.current?.focus()} hasTVPreferredFocus={true} onFocus={() => setFocused('search')} onBlur={() => setFocused(null)} style={[styles.searchWrapper,focused === 'search' && styles.searchFocused]}>
+            <TextInput ref={searchInputRef} style={styles.searchInput}  placeholder="Search"  placeholderTextColor="#aaa"  returnKeyType="search" />
+        </Pressable>
+  
+            <Pressable onFocus={() => setFocused('movies')} onBlur={() => setFocused(null)} onPress={() => setActiveTab('Movies')}>    
+                <Text style={[styles.whiteTab, focused === 'movies' && styles.goldTab]}> Movies </Text>  
+            </Pressable>
 
-          <View style={styles.rightContainer}>
+            <Pressable onFocus={() => setFocused('tv')}  onBlur={() => setFocused(null)} onPress={() => setActiveTab('TV Series')}>   
+               <Text style={[styles.whiteTab, focused === 'tv' && styles.goldTab]}> TV Series </Text>  
+            </Pressable>
 
-            <TouchableOpacity onPress={() => setActiveTab('Movies')}>
-              <Text style={activeTab === 'Movies' ? styles.activeTab : styles.tab}>Movies</Text>
-            </TouchableOpacity>
+            <Pressable  onFocus={() => setFocused('avatar')} onBlur={() => setFocused(null)} >
+                <Image source={require('../assets/ProfileIcon.png')} style={[ styles.avatar, focused === 'avatar' && styles.avatarSelected ]} />
+            </Pressable>
 
-            <TouchableOpacity onPress={() => setActiveTab('TV Series')}>
-              <Text style={activeTab === 'TV Series' ? styles.activeTab : styles.tab}>TV Series</Text>
-            </TouchableOpacity>
-
-            <Image
-              source={{ uri: 'https://via.placeholder.com/30' }}
-              style={styles.avatar}
-            />
-          </View>
     </View>
   );
 };
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -59,35 +57,48 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
   },
-  searchInput: {
+  searchWrapper: {
     flex: 1,
-    backgroundColor: '#3a3a3c',
+    marginHorizontal: 10,
     borderRadius: 10,
+    backgroundColor: '#3a3a3c',
+  },
+  searchInput: {
     height: 30,
     paddingHorizontal: 15,
-    paddingTop: 5,    
-    paddingBottom: 6,  
+    paddingTop: 5,
+    paddingBottom: 6,
     color: 'white',
-    marginHorizontal: 10,
-    fontSize: 12, 
+    fontSize: 12,
   },
-  rightContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchFocused: {
+    borderColor: 'gold',
+    borderWidth: 2,
   },
-  activeTab: {
-    color: 'white',
+  goldTab: {
+    color: 'gold',
     marginRight: 15,
     fontWeight: 'bold',
   },
-  tab: {
-    color: '#aaa',
+  whiteTab: {
+    color: 'white',
     marginRight: 15,
   },
   avatar: {
     width: 30,
     height: 30,
     borderRadius: 15,
+  },
+  avatarSelected: {
+    width: 30,
+    height: 30,
+    borderWidth: 2,
+    borderColor: 'gold',
+  },
+  focusedOutline: {
+    borderWidth: 2,
+    borderColor: 'gold',
+    borderRadius: 10,
   },
 });
 
