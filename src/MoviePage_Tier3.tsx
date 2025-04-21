@@ -1,8 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
-import { Dimensions } from 'react-native';
-
-
+import React, { useRef, useState } from 'react';
+import { Text, Image, StyleSheet, FlatList, Pressable, Dimensions, View } from 'react-native';
 
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
@@ -11,12 +8,11 @@ const posterMargin = 8 // adjust as needed
 const numColumns = 6;   // your desired number of columns
 const posterWidth = (screenWidth - posterMargin * 2 * numColumns) / numColumns;
 
-
 export type Movie = {
   id: number;
   title: string;
   release_date: string;
-  poster_path: string;
+  poster_path: string | null;
 };
 
 type Props = {
@@ -24,37 +20,77 @@ type Props = {
   onEndReached: () => void;
 };
 
+const MoviePage: React.FC<Props> = ({ data, onEndReached }) => {
+  // const [focusedIndex, setFocusedIndex] = useState<number | null>(null); // Naviagtion 
+  const focusedIndex = useRef<number | null>(null);
+  const [, forceUpdate] = useState(0);
+  const triggerUpdate = () => forceUpdate((x) => x + 1);
 
+  const itemRefs = useRef<Array<any>>([]);
 
-const MoviePage: React.FC<Props> = ({ data, onEndReached })=> {
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null); // Naviagtion 
-  
-  const renderItem = ({ item, index }: { item: Movie; index: number }) => (
-    <Pressable style={[ styles.posterContainer, focusedIndex === index && styles.focusedPoster ]} onFocus={() => setFocusedIndex(index)}  onBlur={() => setFocusedIndex(null)}>
+  const renderItem = ({ item, index }: { item: Movie; index: number }) => {
+    if (!item.poster_path) return null; // ⛔ Skip rendering if poster path is missing
 
-        <Image source={{ uri: IMAGE_BASE_URL + item.poster_path }} style={styles.poster} resizeMode="cover"/>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.date}>{item.release_date?.split('-')[0]}</Text>
+    const isFocused = focusedIndex.current === index;
 
-    </Pressable>
-  );
+    return (
+      <Pressable
+        ref={(ref) => {
+          itemRefs.current[index] = ref;
+        }}
+        focusable={true}
+        nextFocusLeft={index > 0 ? itemRefs.current[index - 1] : undefined}
+        nextFocusRight={index < data.length - 1 ? itemRefs.current[index + 1] : undefined}
+        style={[
+          styles.posterContainer,
+          isFocused && styles.focusedPoster,
+        ]}
+        onFocus={() => {
+          focusedIndex.current = index;
+          triggerUpdate();
+        }}
+        onBlur={() => {
+          focusedIndex.current = null;
+          triggerUpdate();
+        }}
+      >
+        <Image source={{ uri: IMAGE_BASE_URL + item.poster_path }} style={styles.poster} resizeMode="cover" />
+        <Text style={styles.title}> {item.title} </Text>
+        <Text style={styles.date}> {item.release_date?.split("-")[0] || 'N/A'} </Text>
+      </Pressable>
+    );
+  };
 
+  // 🧪 Fallback UI when no data is available (avoids blank screens)
+  if (!data || data.length === 0) {
+    return (
+      <View style={styles.fallbackContainer}>
+        <Text style={styles.fallbackText}>No movies to display</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList
       data={data}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item, idx) => item.id?.toString() || idx.toString()}
       horizontal={false}
       numColumns={numColumns}
-      key={numColumns} // ✅ This forces FlatList to fully re-render if column count changes, In React (including React Native), the key prop is used to uniquely identify elements — especially in lists — so React knows how to efficiently re-render things.
+      key={numColumns}  // ✅ This forces FlatList to fully re-render if column count changes, In React (including React Native), the key prop is used to uniquely identify elements — especially in lists — so React knows how to efficiently re-render things.
       contentContainerStyle={styles.list}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.5}
+
+      // ✅ Performance tuning
+      windowSize={5} // how many items outside of render window to preload
+      initialNumToRender={20} // how many items to render initially
+      removeClippedSubviews={true} // remove off-screen items from memory (Android only)
+      maxToRenderPerBatch={10} // number of items to render per batch
+      updateCellsBatchingPeriod={50} // time (ms) between rendering batches
     />
   );
 };
-
 
 const styles = StyleSheet.create({
   list: {
@@ -73,7 +109,7 @@ const styles = StyleSheet.create({
   },
   poster: {
     width: '100%',
-    height:200,
+    height: 200,
     borderRadius: 8,
   },
   title: {
@@ -86,5 +122,16 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 10,
   },
+  fallbackContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  fallbackText: {
+    color: 'white',
+    fontSize: 16,
+  },
 });
+
 export default MoviePage;

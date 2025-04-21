@@ -15,7 +15,7 @@ npm install ts-node --save-dev
 === To RUN on Fire Stick ===
 ============================================================================================================================
 see these  steps:
-1.  enter command in in the backend's directory: "node server.js"
+1.  enter command in in the backend's directory: "nodemon server.js"
 
 2.  Connecting Your Fire TV for Testing enabling Developer Options on Fire TV:
     Go to Settings > My Fire TV > Developer Options and enable ADB Debugging and Apps from Unknown Sources.
@@ -34,6 +34,17 @@ see these  steps:
 
 5.  Navigate to the Front-End Directory:
     "npx react-native run-android"
+
+
+============================================================================================================================
+=== To RUN on Android Studio TV Emulator===
+============================================================================================================================
+
+1. startup back end server by navigating to the backend folder and running    "nodemon server.js"
+
+2. start the front end by navigating to your front end directory and running   "npx react-native run-android"
+
+
 
 
 ============================================================================================================================
@@ -119,9 +130,9 @@ npx react-native run-android
 
 ( Clean android emulation environemnt )
 1. naigate to C:\DevProjects\BlueHiveStreaming\android> 
-2. run .\gradlew clean
+2. run ".\gradlew clean"
 3. navigate to C:\DevProjects\BlueHiveStreaming>  with "cd.."
-4. run npx react-native run-android
+4. run "npx react-native run-android"
 
 
 

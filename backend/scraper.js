@@ -1,27 +1,20 @@
 // backend/scraper.js
-const axios = require('axios');
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const { LRUCache } = require('lru-cache');
+const fetch = require('node-fetch'); // ✅ required if using Node < 18
 
-// Set up an LRU cache to avoid repeated scraping
 const cache = new LRUCache({ max: 100, ttl: 1000 * 60 * 5 });
 
 async function scrapeMovies() {
-  // Check cache first
-  if (cache.has('movies')) {
-    return cache.get('movies');
-  }
+  if (cache.has('movies')) {return cache.get('movies');}
 
-  // Launch Puppeteer for dynamic content
   const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
-  // Replace with the actual URL of the site you want to scrape
   const targetUrl = 'https://example-torrent-site.com/movies';
   await page.goto(targetUrl, { waitUntil: 'domcontentloaded' });
 
-  // Get page content and use Cheerio to parse it
   const html = await page.content();
   const $ = cheerio.load(html);
   let movies = [];
@@ -33,8 +26,6 @@ async function scrapeMovies() {
   });
 
   await browser.close();
-
-  // Cache and return the scraped movies
   cache.set('movies', movies);
   return movies;
 }

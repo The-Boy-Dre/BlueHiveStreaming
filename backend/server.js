@@ -1,39 +1,33 @@
+
 // backend/server.js
 const express = require('express');
 const cors = require('cors');
-const { scrapeMovies } = require('./scraper');
-const { connectDB } = require('./db');
+
 
 const app = express();
+const PORT = 3000;
+
+const TMDB_API_KEY = '5026dab92925f7cb0e77c59bc1e0b240';
+
 app.use(cors());
-app.use(express.json());
 
-// Connect to MongoDB (if needed for further use)
-connectDB();
+app.get('/api/movies', async (req, res) => {
 
-// Endpoint to get movies list
-app.get('/movies', async (req, res) => {
+  const page = req.query.page || 1;
+  const url = `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}&page=${page}`;
+
   try {
-    const movies = await scrapeMovies();
-    res.json(movies);
-  } catch (error) {
-    console.error('Error fetching movies:', error);
-    res.status(500).json({ error: 'Failed to fetch movies' });
+    const response = await fetch(url);
+    if (!response.ok) {throw new Error(`TMDb responded with ${response.status}`);}
+
+    const data = await response.json();
+    res.json(data.results); // Only send the movie list to keep the payload clean
+  } catch (err) {
+    console.error('🔥 Fetch error from TMDb:', err.message);
+    res.status(500).json({ error: 'Failed to fetch movies from TMDb' });
   }
 });
 
-// Endpoint to get a single movie's details by ID
-app.get('/movies/:id', async (req, res) => {
-  // For demonstration, you can extend this to query MongoDB
-  // For now, just return a dummy movie or filter from scraped data
-  const movieId = req.params.id;
-  // Replace this with real logic
-  res.json({
-    id: movieId,
-    title: `Movie ${movieId}`,
-    videoUrl: 'https://example.com/path/to/movie.mp4',
-  });
+app.listen(PORT, () => {
+  console.log(`✅ Movie proxy running on http://localhost:${PORT}/api/movies`);
 });
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Backend server running on http://localhost:${PORT}`));

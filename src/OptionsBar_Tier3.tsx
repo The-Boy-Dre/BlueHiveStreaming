@@ -4,39 +4,42 @@ import {  View, TextInput, StyleSheet, Text,  Image, Pressable} from 'react-nati
 
 const OptionsBar = () => {
   const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // ensures that activeTab can only be either of two string values, 'movies' or 'tvshows'
-  const [focused, setFocused] = useState<string | null>(null); //This initializes a state value with a type annotation. The state can hold either a string or null. By passing null as the initial value, you're indicating that the default state is null
+  const focused = useRef<string | null>(null); //This initializes a state value with a type annotation. The state can hold either a string or null. By passing null as the initial value, you're indicating that the default state is null
+  const [, forceUpdate] = useState(0);
+  const triggerUpdate = () => forceUpdate((x) => x + 1);
   const searchInputRef = useRef<TextInput>(null);
   
 
   return (
     <View style={styles.container}>
 
-        <Pressable  onPress={() => console.log('Open popup')} onFocus={() => setFocused('menu')} onBlur={() => setFocused(null)} style={[styles.menuButton, focused === 'menu' && styles.focusedOutline]}>
-            <Text style={styles.menuIcon}>≡</Text>
+        <Pressable onPress={() => console.log('Open popup')} onFocus={() => { focused.current = 'menu'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate();}} style={[ styles.menuButton, focused.current === 'menu' && styles.focusedOutline, ]} >
+           <Text style={styles.menuIcon}>≡</Text>
         </Pressable>
 
-        {/* Since you're working on Fire TV navigation with focus borders, Pressable is the right choice for you! Introduced in React Native 0.63+  Handles TV remote focus (perfect for your Fire TV app).*/}
-        <Pressable  onPress={() => searchInputRef.current?.focus()} hasTVPreferredFocus={true} onFocus={() => setFocused('search')} onBlur={() => setFocused(null)} style={[styles.searchWrapper,focused === 'search' && styles.searchFocused]}>
-            <TextInput ref={searchInputRef} style={styles.searchInput}  placeholder="Search"  placeholderTextColor="#aaa"  returnKeyType="search" />
+        <Pressable onPress={() => searchInputRef.current?.focus()} hasTVPreferredFocus={true} onFocus={() => { focused.current = 'search'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} style={[ styles.searchWrapper, focused.current === 'search' && styles.searchFocused,]} >
+            <TextInput ref={searchInputRef} style={styles.searchInput} placeholder="Search" placeholderTextColor="#aaa" returnKeyType="search" />
         </Pressable>
-  
-            <Pressable onFocus={() => setFocused('movies')} onBlur={() => setFocused(null)} onPress={() => setActiveTab('Movies')}>    
-                <Text style={[styles.whiteTab, focused === 'movies' && styles.goldTab]}> Movies </Text>  
-            </Pressable>
 
-            <Pressable onFocus={() => setFocused('tv')}  onBlur={() => setFocused(null)} onPress={() => setActiveTab('TV Series')}>   
-               <Text style={[styles.whiteTab, focused === 'tv' && styles.goldTab]}> TV Series </Text>  
-            </Pressable>
+        <Pressable onPress={() => setActiveTab('Movies')} onFocus={() => { focused.current = 'movies'; triggerUpdate();}} onBlur={() => { focused.current = null; triggerUpdate();}} >
+            <Text style={[ styles.whiteTab, focused.current === 'movies' && styles.goldTab, ]} >
+              Movies
+            </Text>
+        </Pressable>
 
-            <Pressable  onFocus={() => setFocused('avatar')} onBlur={() => setFocused(null)} >
-                <Image source={require('../assets/ProfileIcon.png')} style={[ styles.avatar, focused === 'avatar' && styles.avatarSelected ]} />
-            </Pressable>
+        <Pressable onPress={() => setActiveTab('TV Series')} onFocus={() => { focused.current = 'tv'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} >
+            <Text style={[ styles.whiteTab, focused.current === 'tv' && styles.goldTab, ]}> 
+              TV Series 
+            </Text>
+        </Pressable>
+
+        <Pressable onFocus={() => { focused.current = 'avatar'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }}>
+            <Image source={require('../assets/ProfileIcon.png')} style={[ styles.avatar, focused.current === 'avatar' && styles.avatarSelected, ]} />
+        </Pressable>
 
     </View>
   );
 };
-
-
 
 
 
