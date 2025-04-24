@@ -28,6 +28,26 @@ app.get('/api/movies', async (req, res) => {
   }
 });
 
+
+
+
+app.get('/api/tv', async (req, res) => {
+  const page = req.query.page || 1;
+  const url = `https://api.themoviedb.org/3/trending/tv/day?api_key=${TMDB_API_KEY}&page=${page}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {throw new Error(`TMDb responded with ${response.status}`);}
+
+    const data = await response.json();
+    res.json(data.results);
+  } catch (err) {
+    console.error('🔥 Fetch error from TMDb (TV):', err.message);
+    res.status(500).json({ error: 'Failed to fetch TV shows from TMDb' });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`✅ Movie proxy running on http://localhost:${PORT}/api/movies`);
 });

@@ -9,6 +9,8 @@ const numColumns = 6;   // your desired number of columns
 const posterWidth = (screenWidth - posterMargin * 2 * numColumns) / numColumns;
 
 export type Movie = {
+  first_air_date: string;
+  name: string;
   id: number;
   title: string;
   release_date: string;
@@ -54,9 +56,17 @@ const MoviePage: React.FC<Props> = ({ data, onEndReached }) => {
           triggerUpdate();
         }}
       >
-        <Image source={{ uri: IMAGE_BASE_URL + item.poster_path }} style={styles.poster} resizeMode="cover" />
-        <Text style={styles.title}> {item.title} </Text>
-        <Text style={styles.date}> {item.release_date?.split("-")[0] || 'N/A'} </Text>
+        <Image
+          source={{ uri: IMAGE_BASE_URL + item.poster_path }}
+          style={styles.poster}
+          resizeMode="cover"
+        />
+        <Text style={styles.title}>
+          {item.title || item.name || 'N/A'}
+        </Text>
+        <Text style={styles.date}>
+          {(item.release_date || item.first_air_date)?.split('-')[0] || 'N/A'}
+        </Text>
       </Pressable>
     );
   };
@@ -74,7 +84,7 @@ const MoviePage: React.FC<Props> = ({ data, onEndReached }) => {
     <FlatList
       data={data}
       renderItem={renderItem}
-      keyExtractor={(item, idx) => item.id?.toString() || idx.toString()}
+      keyExtractor={(item, idx) => (item.id ? item.id.toString() + '-' + idx.toString() : idx.toString())} // ✅ Combine ID and index for guaranteed uniqueness
       horizontal={false}
       numColumns={numColumns}
       key={numColumns}  // ✅ This forces FlatList to fully re-render if column count changes, In React (including React Native), the key prop is used to uniquely identify elements — especially in lists — so React knows how to efficiently re-render things.

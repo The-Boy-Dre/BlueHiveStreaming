@@ -1,47 +1,45 @@
 import React, { useRef, useState } from 'react';
-import {  View, TextInput, StyleSheet, Text,  Image, Pressable} from 'react-native';
+import { View, TextInput, StyleSheet, Text, Image, Pressable } from 'react-native';
 
-
-const OptionsBar = () => {
-  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // ensures that activeTab can only be either of two string values, 'movies' or 'tvshows'
-  const focused = useRef<string | null>(null); //This initializes a state value with a type annotation. The state can hold either a string or null. By passing null as the initial value, you're indicating that the default state is null
+// Accepts an onTabChange prop to notify the parent BrowseScreen component of tab switches
+const OptionsBar = ({ onTabChange }: { onTabChange: (tab: 'Movies' | 'TV Series') => void }) => {
+  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // restricts active tab to Movies or TV Series
+  const focused = useRef<string | null>(null); // tracks which UI item is currently focused
   const [, forceUpdate] = useState(0);
   const triggerUpdate = () => forceUpdate((x) => x + 1);
   const searchInputRef = useRef<TextInput>(null);
-  
 
   return (
     <View style={styles.container}>
 
-        <Pressable onPress={() => console.log('Open popup')} onFocus={() => { focused.current = 'menu'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate();}} style={[ styles.menuButton, focused.current === 'menu' && styles.focusedOutline, ]} >
-           <Text style={styles.menuIcon}>≡</Text>
-        </Pressable>
+      {/* Menu Button */}
+      <Pressable onPress={() => console.log('Open popup')} onFocus={() => { focused.current = 'menu'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} style={[styles.menuButton, focused.current === 'menu' && styles.focusedOutline]}>
+        <Text style={styles.menuIcon}>≡</Text>
+      </Pressable>
 
-        <Pressable onPress={() => searchInputRef.current?.focus()} hasTVPreferredFocus={true} onFocus={() => { focused.current = 'search'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} style={[ styles.searchWrapper, focused.current === 'search' && styles.searchFocused,]} >
-            <TextInput ref={searchInputRef} style={styles.searchInput} placeholder="Search" placeholderTextColor="#aaa" returnKeyType="search" />
-        </Pressable>
+      {/* Search Input */}
+      <Pressable onPress={() => searchInputRef.current?.focus()} hasTVPreferredFocus={true} onFocus={() => { focused.current = 'search'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} style={[styles.searchWrapper, focused.current === 'search' && styles.searchFocused]}>
+        <TextInput ref={searchInputRef} style={styles.searchInput} placeholder="Search" placeholderTextColor="#aaa" returnKeyType="search" />
+      </Pressable>
 
-        <Pressable onPress={() => setActiveTab('Movies')} onFocus={() => { focused.current = 'movies'; triggerUpdate();}} onBlur={() => { focused.current = null; triggerUpdate();}} >
-            <Text style={[ styles.whiteTab, focused.current === 'movies' && styles.goldTab, ]} >
-              Movies
-            </Text>
-        </Pressable>
+      {/* Movies Tab */}
+      <Pressable onPress={() => { setActiveTab('Movies'); onTabChange('Movies'); }} onFocus={() => { focused.current = 'movies'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }}>
+        <Text style={[styles.whiteTab, focused.current === 'movies' && styles.goldTab]}>Movies</Text>
+      </Pressable>
 
-        <Pressable onPress={() => setActiveTab('TV Series')} onFocus={() => { focused.current = 'tv'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }} >
-            <Text style={[ styles.whiteTab, focused.current === 'tv' && styles.goldTab, ]}> 
-              TV Series 
-            </Text>
-        </Pressable>
+      {/* TV Series Tab */}
+      <Pressable onPress={() => { setActiveTab('TV Series'); onTabChange('TV Series'); }} onFocus={() => { focused.current = 'tv'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }}>
+        <Text style={[styles.whiteTab, focused.current === 'tv' && styles.goldTab]}>TV Shows</Text>
+      </Pressable>
 
-        <Pressable onFocus={() => { focused.current = 'avatar'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }}>
-            <Image source={require('../assets/ProfileIcon.png')} style={[ styles.avatar, focused.current === 'avatar' && styles.avatarSelected, ]} />
-        </Pressable>
+      {/* Avatar/Profile Icon */}
+      <Pressable onFocus={() => { focused.current = 'avatar'; triggerUpdate(); }} onBlur={() => { focused.current = null; triggerUpdate(); }}>
+        <Image source={require('../assets/ProfileIcon.png')} style={[styles.avatar, focused.current === 'avatar' && styles.avatarSelected]} />
+      </Pressable>
 
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: {
