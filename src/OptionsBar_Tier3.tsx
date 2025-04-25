@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet, Text, Image, Pressable } from 'react-nativ
 
 // Accepts an onTabChange prop to notify the parent BrowseScreen component of tab switches
 const OptionsBar = ({ onTabChange }: { onTabChange: (tab: 'Movies' | 'TV Series') => void }) => {
-  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // restricts active tab to Movies or TV Series
+  const [activeTab, setActiveTab] = useState<'Movies' | 'TV Series'>(); // You would keep the internal activeTab state in OptionsBar if you wanted the OptionsBar itself to visually indicate which tab is currently selected, independently of focus.
   const focused = useRef<string | null>(null); // tracks which UI item is currently focused
   const [, forceUpdate] = useState(0);
   const triggerUpdate = () => forceUpdate((x) => x + 1);
