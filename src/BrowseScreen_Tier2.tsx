@@ -146,28 +146,27 @@ const BrowseScreen = () => {
     </View>
   );
 };
-        // --- Centralized Stylesheet ---
-        // Using the exact styles from your previous code snippet where functions were missing
-        const styles = StyleSheet.create({
-            container: { flex: 1, backgroundColor: '#000', },
-            list: { padding: 16, paddingTop: 10, }, // Your original list style
-            posterContainer: { width: posterWidth, margin: posterMargin, marginBottom: posterMargin + 10, marginLeft: posterMargin, marginRight: posterMargin, alignItems: 'center', }, // Your original posterContainer style
-            focusedPoster: { borderWidth: 3, borderColor: 'gold', borderRadius: 12, margin: posterMargin - 3, }, // Your original focusedPoster style
-            poster: { // Your original poster style
-                width: '100%',
-                height: posterWidth * 1.5,
-                borderRadius: 8,
-                backgroundColor: '#333',
-              },
-            title: { color: 'white', marginTop: 6, fontSize: 12, fontWeight: '500', textAlign: 'center', width: '100%', }, // Your original title style
-            date: { color: 'gray', fontSize: 10, marginTop: 2, textAlign: 'center', width: '100%', }, // Your original date style
-            fallbackContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 40, }, // Your original fallbackContainer style
-            fallbackText: { color: 'gray', fontSize: 16, }, // Your original fallbackText style
-            loadingOverlay: { position: 'absolute', left: 0, right: 0, top: 50, bottom: 0, alignItems: 'center', justifyContent: 'center', }, // Your original loadingOverlay style
-          });
-    
+
+// --- Centralized Stylesheet ---
+// Using the exact styles from your previous code snippet where functions were missing
+const styles = StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#000', },
+    list: { padding: 16, paddingTop: 10, }, // Your original list style
+    posterContainer: { width: posterWidth, margin: posterMargin, marginBottom: posterMargin + 10, marginLeft: posterMargin, marginRight: posterMargin, alignItems: 'center', }, // Your original posterContainer style
+    focusedPoster: { borderWidth: 3, borderColor: 'gold', borderRadius: 12, margin: posterMargin - 3, }, // Your original focusedPoster style
+    poster: { width: '100%', height: posterWidth * 1.5, borderRadius: 8, backgroundColor: '#333', },
+    title: { color: 'white', marginTop: 6, fontSize: 12, fontWeight: '500', textAlign: 'center', width: '100%', }, // Your original title style
+    date: { color: 'gray', fontSize: 10, marginTop: 2, textAlign: 'center', width: '100%', }, // Your original date style
+    fallbackContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 40, }, // Your original fallbackContainer style
+    fallbackText: { color: 'gray', fontSize: 16, }, // Your original fallbackText style
+    loadingOverlay: { position: 'absolute', left: 0, right: 0, top: 50, bottom: 0, alignItems: 'center', justifyContent: 'center', }, // Your original loadingOverlay style
+  });
 
 
+
+
+
+  
 
 
   export default BrowseScreen;

@@ -1,162 +1,105 @@
 
 // import React from 'react';
-// import type {PropsWithChildren} from 'react';
-// import { SafeAreaView, ScrollView,StatusBar, StyleSheet, Text,useColorScheme, View,} from 'react-native';
-// import { Colors, DebugInstructions, LearnMoreLinks, ReloadInstructions,} from 'react-native/Libraries/NewAppScreen';
+// import { StatusBar, useColorScheme, View } from 'react-native';
+// import { Colors } from 'react-native/Libraries/NewAppScreen';
 // import { NavigationContainer } from '@react-navigation/native';
-// import HomeScreen from './src/HomeScreen';
-// import DetailsScreen from './src/DetailsScreen';
-// import OptionsBar from './src/OptionsBar';
 // import { createStackNavigator } from '@react-navigation/stack';
+// import BrowseScreen from './src/BrowseScreen_Tier2';
 
 
-// type SectionProps = PropsWithChildren<{
-//   title: string;
-// }>;
-
-// function Section({children, title}: SectionProps): React.JSX.Element {
-//   const isDarkMode = useColorScheme() === 'dark';
-//   return (
-//     <View style={styles.sectionContainer}>
-//       <Text
-//         style={[
-//           styles.sectionTitle,
-//           {
-//             color: isDarkMode ? Colors.white : Colors.black,
-//           },
-//         ]}>
-//         {title}
-//       </Text>
-//       <Text
-//         style={[
-//           styles.sectionDescription,
-//           {
-//             color: isDarkMode ? Colors.light : Colors.dark,
-//           },
-//         ]}>
-//         {children}
-//       </Text>
-//     </View>
-//   );
-// }
 
 // type RootStackParamList = {
 //   Home: undefined;
 //   Details: { detailId: string };
-//   OptionsBar: undefined;
+
+//   Browse: undefined;
 // };
 
 // const Stack = createStackNavigator<RootStackParamList>();
 
 
-
 // function App(): React.JSX.Element {
 //   const isDarkMode = useColorScheme() === 'dark';
-
-//   const backgroundStyle = {
-//     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-//   };
+//   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
 
 //   return (
-//     <SafeAreaView style={backgroundStyle}>
-//       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} backgroundColor={backgroundStyle.backgroundColor} />
-       
-//       <ScrollView contentInsetAdjustmentBehavior="automatic" style={backgroundStyle}>
-        
-//         <View style={{ backgroundColor: isDarkMode ? Colors.black : Colors.white, }}>
-
-//             {/* <OptionsBar/> */}
-
-//             {/* <View style={{ height: '8%', backgroundColor: 'red'}} />
-//             <View style={{ height: '10%', backgroundColor: 'darkorange'}} />
-//             <View style={{ height: '12%', backgroundColor: 'green' }} /> */}
-
-//             {/* <Section title="Step One">
-//               Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-//               screen and then come back to see your edits.
-//             </Section>
-//             <Section title="See Your Changes">
-//               <ReloadInstructions />
-//             </Section>
-//             <Section title="Debug">
-//               <DebugInstructions />
-//             </Section>
-//             <Section title="Learn More">
-//               Read the docs to discover what to do next:
-//             </Section>
-
-//             <LearnMoreLinks /> */}
-
-//           <NavigationContainer>
-//                 <Stack.Navigator initialRouteName="OptionsBar">
-//                 <Stack.Screen name="OptionsBar" component={OptionsBar} />
-//                   {/* <Stack.Screen name="Home" component={HomeScreen} />
-//                   <Stack.Screen name="Details" component={DetailsScreen} /> */}
-//                 </Stack.Navigator>
-//           </NavigationContainer>
-
-
-//         </View>
-
-//       </ScrollView>
-//     </SafeAreaView>
+//     <View style={{ flex: 1, backgroundColor }}>
+//       <StatusBar
+//         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+//         backgroundColor={backgroundColor}
+//       />
+//       <NavigationContainer>
+//         <Stack.Navigator initialRouteName="Browse">
+//             <Stack.Screen name="Browse" component={BrowseScreen} options={{ headerShown: false }} />
+//         </Stack.Navigator>
+//       </NavigationContainer>
+//     </View>
 //   );
 // }
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
 
 // export default App;
 
 
+
+
 import React from 'react';
 import { StatusBar, useColorScheme, View } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+// --- Import Screens ---
 import BrowseScreen from './src/BrowseScreen_Tier2';
+import OverviewPage from './src/NestedPages/OverviewPage'; // *** ADDED: Import OverviewPage ***
 
-
-
-type RootStackParamList = {
-  Home: undefined;
-  Details: { detailId: string };
-
-  Browse: undefined;
+// --- Define Param List for Type Safety ---
+// Describe all screens in this stack and the parameters they expect.
+// 'undefined' means the screen expects no parameters.
+export type RootStackParamList = {
+  Browse: undefined; // Your main browse screen
+  // *** ADDED: Definition for Overview screen and its expected params ***
+  Overview: {
+    // Required params:
+    id: number;
+    media_type: 'movie' | 'tv';
+    // Optional params (useful for initial display while full details load):
+    title?: string;
+    year?: string;
+    poster_url?: string | null;
+    // Add any other simple params Overview might receive directly
+  };
+  // Add other screens like 'Player' or 'Search' here later if needed
+  // Player: { contentId: number, streamUrl: string };
 };
 
+// --- Create the Stack Navigator with the defined Param List ---
 const Stack = createStackNavigator<RootStackParamList>();
 
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
+  // Use a consistent background color (e.g., black) instead of dynamic Colors
+  const backgroundColor = 'rgb(13, 13, 13)'; // Match OverviewPage background
 
   return (
+    // Use flex: 1 on the main View to ensure it takes full screen height
     <View style={{ flex: 1, backgroundColor }}>
       <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        barStyle={'light-content'} // Force light content for dark background
         backgroundColor={backgroundColor}
       />
+      {/* NavigationContainer wraps the entire navigation structure */}
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Browse">
-            <Stack.Screen name="Browse" component={BrowseScreen} options={{ headerShown: false }} />
+        {/* Stack.Navigator manages the stack of screens */}
+        <Stack.Navigator initialRouteName="Browse" screenOptions={{ headerShown: false }}> 
+            <Stack.Screen name="Browse" component={BrowseScreen}/>
+            {/* options={{ headerShown: false }}  Already set globally by screenOptions */}
+            
+            <Stack.Screen
+              name="Overview" // Matches the key in RootStackParamList
+              component={OverviewPage} // Use the imported component
+              // options={{ headerShown: false }} // Already set globally
+             />
+             {/* Add other screens here later */}
         </Stack.Navigator>
       </NavigationContainer>
     </View>
