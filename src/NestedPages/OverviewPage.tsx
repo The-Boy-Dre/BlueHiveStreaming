@@ -106,26 +106,26 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
     <View style={styles.screenContainer}>
       {/* --- Top Bar --- */}
       <View style={styles.topBar}>
-        <Pressable onPress={handleGoBack} style={styles.iconButton}>
-          <Image source={require('../../assets/left_arrow.png')} style={{ backgroundColor: COLORS.textPrimary,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
-        </Pressable>
-        <View style={styles.topBarIconsRight}>
-          <Pressable onPress={handleSearch} style={styles.iconButton}>
-            <Image source={require('../../assets/search.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
-          </Pressable>
-          {/* Add isBookmarked state later */}
-          <Pressable onPress={handleBookmark} style={styles.iconButton}>
-            <Image source={require('../../assets/bookmark.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
-            {/* Use 'bookmark' icon if it IS bookmarked */}
-          </Pressable>
-        </View>
+            <Pressable onPress={handleGoBack} style={styles.iconButton}>
+              <Image source={require('../../assets/left_arrow.png')} style={{ backgroundColor: COLORS.textPrimary,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
+            </Pressable>
+
+            <View style={styles.topBarIconsRight}>
+                <Pressable onPress={handleSearch} style={styles.iconButton}>
+                  <Image source={require('../../assets/search.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
+                </Pressable>
+                {/* Add isBookmarked state later */}
+                <Pressable onPress={handleBookmark} style={styles.iconButton}>
+                  <Image source={require('../../assets/bookmark.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
+                  {/* Use 'bookmark' icon if it IS bookmarked */}
+                </Pressable>
+            </View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* --- Header Section (Poster + Details) --- */}
         <View style={styles.headerSection}>
-          <Image
-            source={ poster_url ? { uri: poster_url } : require('../../assets/poster_placeholder.png')} style={styles.poster}/>
+          <Image source={ poster_url ? { uri: poster_url } : require('../../assets/poster_placeholder.png')} style={styles.poster}/>
           <View style={styles.headerDetails}>
             <Text style={styles.title}>{title}</Text>
             <View style={styles.metaRow}>
@@ -214,20 +214,19 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: 'rgb(17, 17, 22)',
     paddingTop: Platform.OS === 'android' ? 10 : 40, // Adjust status bar spacing
   },
   topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: -10,
     paddingHorizontal: 15,
-    paddingVertical: 10,
-    // position: 'absolute', // Keep it part of the flow or absolute? Let's keep it in flow.
-    // top: Platform.OS === 'android' ? 10 : 40,
-    // left: 0,
-    // right: 0,
-    // zIndex: 1, // If absolute
+    paddingVertical: 8,
+    justifyContent: 'space-between',
+    height: 40,
+    width: '100%',
+    backgroundColor: '#2c2c2e',
+    flexDirection: 'row',
   },
   topBarIconsRight: {
     flexDirection: 'row',

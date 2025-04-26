@@ -99,7 +99,6 @@ function App(): React.JSX.Element {
               component={OverviewPage} // Use the imported component
               // options={{ headerShown: false }} // Already set globally
              />
-             {/* Add other screens here later */}
         </Stack.Navigator>
       </NavigationContainer>
     </View>

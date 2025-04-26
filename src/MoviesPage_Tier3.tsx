@@ -92,9 +92,9 @@ const MoviesPage: React.FC<MediaPageProps> = ({
             accessibilityLabel={`${item.title} (${item.year})`} // Describe for screen readers 
           >
             
-            <Image source={{ uri: item.poster_url }} style={posterStyle} resizeMode="cover" />  {/* Display the poster image */}
-            <Text style={titleTextStyle}>{item.title || 'N/A'}</Text>  {/* Display the title text */}
-            <Text style={dateStyle}>{item.year || 'N/A'}</Text>  {/* Display the year text */}
+            <Image source={{ uri: item.poster_url }} style={posterStyle} resizeMode="cover" /> 
+            <Text style={titleTextStyle}>{item.title || 'N/A'}</Text> 
+            <Text style={dateStyle}>{item.year || 'N/A'}</Text> 
       </Pressable>
     );
   };
