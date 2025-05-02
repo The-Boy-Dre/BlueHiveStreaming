@@ -4,7 +4,7 @@ from src.config import settings # To ensure env loaded if run directly
 import uuid
 
 # !!! REPLACE WITH A VALID URL FROM YOUR MIRROR SITE !!!
-test_url = "https://ww19.0123movie.net/home.html"
+test_url = "https://ww19.0123movie.net/movie/alien-romulus-1630857469.html"
 test_id = f"test_movie_{uuid.uuid4()}" # Unique ID for testing
 test_type = "movie"
 
