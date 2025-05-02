@@ -1,47 +1,4 @@
 
-// import React from 'react';
-// import { StatusBar, useColorScheme, View } from 'react-native';
-// import { Colors } from 'react-native/Libraries/NewAppScreen';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createStackNavigator } from '@react-navigation/stack';
-// import BrowseScreen from './src/BrowseScreen_Tier2';
-
-
-
-// type RootStackParamList = {
-//   Home: undefined;
-//   Details: { detailId: string };
-
-//   Browse: undefined;
-// };
-
-// const Stack = createStackNavigator<RootStackParamList>();
-
-
-// function App(): React.JSX.Element {
-//   const isDarkMode = useColorScheme() === 'dark';
-//   const backgroundColor = isDarkMode ? Colors.darker : Colors.lighter;
-
-//   return (
-//     <View style={{ flex: 1, backgroundColor }}>
-//       <StatusBar
-//         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-//         backgroundColor={backgroundColor}
-//       />
-//       <NavigationContainer>
-//         <Stack.Navigator initialRouteName="Browse">
-//             <Stack.Screen name="Browse" component={BrowseScreen} options={{ headerShown: false }} />
-//         </Stack.Navigator>
-//       </NavigationContainer>
-//     </View>
-//   );
-// }
-
-// export default App;
-
-
-
-
 import React from 'react';
 import { StatusBar, useColorScheme, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';

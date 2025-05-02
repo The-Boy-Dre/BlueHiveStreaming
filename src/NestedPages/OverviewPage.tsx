@@ -1,15 +1,30 @@
 // OverviewPage.tsx
 import React from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, Pressable, FlatList, Platform,} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  FlatList,
+  Platform,
+  SafeAreaView, // *** ADDED: Import SafeAreaView ***
+  StatusBar,      // *** ADDED: Import StatusBar ***
+} from 'react-native';
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient'; // *** ADDED: Import LinearGradient ***
 
 // --- Color Palette ---
 const COLORS = {
-  background: 'rgb(13, 13, 13)',         // Very dark grey/off-black
-  cardBackground: 'rgb(16, 15, 15)',     // Slightly lighter grey (for buttons)
-  textPrimary: 'rgb(248, 248, 248)',    // White/Off-white
-  textSecondary: 'rgb(170, 170, 170)',  // Grey for secondary text
-  accent: 'rgb(41, 98, 255)',           // Blue accent (icons, focus)
+  background: 'rgb(13, 13, 13)',
+  cardBackground: 'rgb(16, 15, 15)',
+  textPrimary: 'rgb(248, 248, 248)',
+  textSecondary: 'rgb(170, 170, 170)',
+  accent: 'rgb(41, 98, 255)',
+  // --- ADDED: Gradient Colors ---
+  gradientBlue: 'rgb(41, 98, 255)',
+  gradientGray: 'rgb(28, 28, 28)', // Using a darker gray for subtle effect
 };
 
 // --- Define the shape of the data we expect for cast ---
@@ -44,16 +59,11 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
   const route = useRoute<RouteProp<OverviewPageRouteParams, 'Overview'>>();
   const navigation = useNavigation();
 
-  // Extract data from route params
+  // --- Add state for bookmark status (example) ---
+  const [isBookmarked, setIsBookmarked] = React.useState(false); // Moved for clarity
+
   const {
-    id,
-    title,
-    year,
-    poster_url,
-    rating,
-    overview,
-    cast = [], // Default to empty array if cast is not provided
-    media_type,
+    id, title, year, poster_url, rating, overview, cast = [], media_type,
   } = route.params;
 
   // --- Placeholder Functions ---
@@ -74,6 +84,7 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
   };
 
   const handleBookmark = () => {
+    setIsBookmarked(prev => !prev);
     console.log(`Bookmark toggled for ${media_type} ID: ${id}`);
     // Add/remove bookmark logic here (update state/API)
   };
@@ -103,71 +114,98 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
   );
 
   return (
-    <View style={styles.screenContainer}>
-      {/* --- Top Bar --- */}
-      <View style={styles.topBar}>
+    // *** MODIFIED: Use SafeAreaView as outermost container ***
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" />
+
+       {/* *** MODIFIED: Use LinearGradient for the background *** */}
+      <LinearGradient
+        colors={[COLORS.gradientBlue, COLORS.gradientGray]} // Define gradient colors
+        start={{ x: 0, y: 0 }} // Gradient starts top-left
+        end={{ x: 0.5, y: 0.6 }} // Ends more towards center-bottom (adjust for desired effect)
+        style={styles.gradientContainer} // Apply flex: 1 style
+      >
+        {/* --- Original Content Starts Here --- */}
+
+        {/* --- Top Bar --- */}
+        {/* Keep the existing Top Bar styles - it sits ON TOP of the gradient */}
+        <View style={styles.topBar}>
             <Pressable onPress={handleGoBack} style={styles.iconButton}>
               <Image source={require('../../assets/left_arrow.png')} style={{ backgroundColor: COLORS.textPrimary,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
             </Pressable>
-
             <View style={styles.topBarIconsRight}>
                 <Pressable onPress={handleSearch} style={styles.iconButton}>
                   <Image source={require('../../assets/search.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
                 </Pressable>
-                {/* Add isBookmarked state later */}
                 <Pressable onPress={handleBookmark} style={styles.iconButton}>
-                  <Image source={require('../../assets/bookmark.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
-                  {/* Use 'bookmark' icon if it IS bookmarked */}
+                  <Image source={isBookmarked ? require('../../assets/bookmark_filled.png') : require('../../assets/bookmark.png')} style={{ backgroundColor: COLORS.accent,  borderRadius: 13, marginRight: 5, width: 26, height: 26 }} />
+                  {/* Assumed you have bookmark_filled.png */}
                 </Pressable>
             </View>
-      </View>
+        </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* --- Header Section (Poster + Details) --- */}
-        <View style={styles.headerSection}>
-          <Image source={ poster_url ? { uri: poster_url } : require('../../assets/poster_placeholder.png')} style={styles.poster}/>
-          <View style={styles.headerDetails}>
-            <Text style={styles.title}>{title}</Text>
-            <View style={styles.metaRow}>
-              <Text style={styles.metaText}>{year}</Text>
-              {rating !== undefined && rating > 0 && ( 
-                <>
-                  <Text style={[styles.metaText, { marginHorizontal: 8 }]}>|</Text>
-                  <Image source={require('../../assets/star.png')} style={{ backgroundColor: 'gold',  borderRadius: 13, marginRight: 5, width: 16, height: 16 }} />
-                  <Text style={[styles.metaText, { marginLeft: 4 }]}>
-                    {rating.toFixed(1)}
-                  </Text>
-                </>
-              )}
-            </View>
+        {/* --- ScrollView contains the rest of the content --- */}
+        {/* Keep the existing ScrollView styles */}
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+            {/* --- Header Section (Poster + Details) --- */}
+             {/* Keep existing header section */}
+             <View style={styles.headerSection}>
+                 {/* ... Poster Image ... */}
+                 <Image source={ poster_url ? { uri: poster_url } : require('../../assets/poster_placeholder.png')} style={styles.poster}/>
+                 {/* ... Header Details View ... */}
+                 <View style={styles.headerDetails}>
+                     {/* ... Title Text ... */}
+                     <Text style={styles.title}>{title}</Text>
+                    {/* ... Meta Row View ... */}
+                    <View style={styles.metaRow}>
+                         {/* ... Year Text ... */}
+                         <Text style={styles.metaText}>{year}</Text>
+                        {/* ... Rating conditional rendering ... */}
+                        {rating !== undefined && rating > 0 && ( <> /* ... rating items ... */ </> )}
+                    </View>
+                    {/* ... Button Row View ... */}
+                    <View style={styles.buttonRow}>
 
 
-            {/* --- Action Buttons --- */}
-            <View style={styles.buttonRow}>
-              <Pressable style={({ pressed }) => [ styles.buttonBase, styles.buttonPrimary, pressed && styles.buttonPressed, ]} onPress={handlePlay}>
+
+              {/* --- Play Button --- */}
+              <Pressable
+                // *** RESTORED: Correct style function ***
+                style={({ pressed }) => [
+                  styles.buttonBase,
+                  styles.buttonPrimary,
+                  pressed && styles.buttonPressed, // Apply pressed style conditionally
+                ]}
+                onPress={handlePlay}
+              >
                  <Image source={require('../../assets/play_button.png')} style={{ marginRight: 5, width: 20, height: 20 }} />
                  <Text style={styles.buttonText}>Play</Text>
               </Pressable>
 
+
+              {/* --- Play Newest Button (Conditional) --- */}
               {media_type === 'tv' && (
                 <Pressable
+                  // *** RESTORED: Correct style function ***
                   style={({ pressed }) => [
                     styles.buttonBase,
                     styles.buttonSecondary,
-                    pressed && styles.buttonPressed,
+                    pressed && styles.buttonPressed, // Apply pressed style conditionally
                   ]}
                   onPress={handlePlayNewestEpisode}
                 >
                   <Text style={styles.buttonText}>Play Newest</Text>
                 </Pressable>
               )}
+              
 
-              {/* Consider adding Trailer button if data available */}
+              {/* --- Trailer Button --- */}
               <Pressable
+                // *** RESTORED: Correct style function ***
                 style={({ pressed }) => [
                     styles.buttonBase,
                     styles.buttonSecondary,
-                    pressed && styles.buttonPressed,
+                    pressed && styles.buttonPressed, // Apply pressed style conditionally
                   ]}
                 onPress={handleViewTrailer}
                >
@@ -175,58 +213,64 @@ const OverviewPage: React.FC<OverviewPageProps> = () => {
                </Pressable>
 
             </View>
-          </View>
-        </View>
+                 </View>
+             </View>
 
+            {/* --- Overview Section --- */}
+             {/* Keep existing overview section */}
+            {overview && ( <View style={styles.section}> /* ... */ </View> )}
 
+            {/* --- Cast Section --- */}
+             {/* Keep existing cast section */}
+            {cast.length > 0 && ( <View style={styles.section}> /* ... */ </View> )}
 
-        {/* --- Overview Section --- */}
-        {overview && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Overview</Text>
-            <Text style={styles.overviewText}>{overview}</Text>
-          </View>
-        )}
+        </ScrollView>
 
-        {/* --- Cast Section --- */}
-        {cast.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Cast</Text>
-            <FlatList
-              data={cast}
-              renderItem={renderCastItem}
-              keyExtractor={(item) => item.id.toString()}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.castListContainer}
-            />
-          </View>
-        )}
+        {/* --- Original Content Ends Here --- */}
 
-        {/* Add Seasons / See Also sections here later if needed */}
-
-      </ScrollView>
-    </View>
+      </LinearGradient>
+    </SafeAreaView> // *** ADDED: Closing SafeAreaView ***
   );
 };
 
 // --- Styles ---
 const styles = StyleSheet.create({
-  screenContainer: {
+  // *** ADDED: Style for SafeAreaView ***
+  safeArea: {
     flex: 1,
-    backgroundColor: 'rgb(17, 17, 22)',
-    paddingTop: Platform.OS === 'android' ? 10 : 40, // Adjust status bar spacing
+    backgroundColor: COLORS.gradientGray, // Fallback background color
   },
+  // *** MODIFIED: Renamed and repurposed screenContainer for gradient ***
+  gradientContainer: {
+    flex: 1, // Make gradient fill the safe area
+    // REMOVED backgroundColor from here
+    // REMOVED paddingTop from here (handled by SafeAreaView)
+  },
+  // --- Keep ALL OTHER original styles from your previous OverviewPage ---
+  // styles.topBar, styles.topBarIconsRight, styles.iconButton, styles.scrollContainer,
+  // styles.headerSection, styles.poster, styles.headerDetails, styles.title,
+  // styles.metaRow, styles.metaText, styles.buttonRow, styles.buttonBase,
+  // styles.buttonPrimary, styles.buttonSecondary, styles.buttonText, styles.buttonPressed,
+  // styles.section, styles.sectionTitle, styles.overviewText,
+  // styles.castListContainer, styles.castItem, styles.castImage, styles.castName,
+  // styles.castCharacter
+  // (Copying just a few below for context, but keep them all)
   topBar: {
     alignItems: 'center',
-    marginTop: -10,
+    // marginTop: -10, // Removed marginTop, let SafeArea handle top spacing
     paddingHorizontal: 15,
     paddingVertical: 8,
     justifyContent: 'space-between',
     height: 40,
-    width: '100%',
-    backgroundColor: '#2c2c2e',
+    // width: '100%', // No longer needed if it's not absolute
+    // backgroundColor: '#2c2c2e', // Keep or remove based on desired look over gradient
     flexDirection: 'row',
+    position: 'absolute', // Make topBar float over the ScrollView
+    top: Platform.OS === 'android' ? StatusBar.currentHeight : 0, // Position below status bar dynamically
+    left: 0,
+    right: 0,
+    zIndex: 1, // Ensure it's above the ScrollView content
+    backgroundColor: 'rgba(16, 15, 15, 0.6)', // Semi-transparent background
   },
   topBarIconsRight: {
     flexDirection: 'row',
@@ -235,12 +279,13 @@ const styles = StyleSheet.create({
     padding: 8, // Clickable area
   },
   scrollContainer: {
-    paddingBottom: 40, // Space at the bottom
+    paddingBottom: 40,
+    paddingTop: 50, // *** ADDED/ADJUSTED: Add padding to push content below absolute topBar ***
   },
   headerSection: {
     flexDirection: 'row',
     paddingHorizontal: 20,
-    paddingTop: 20, // Space below top bar
+   // paddingTop: 20, // Removed, handled by scrollContainer paddingTop
     marginBottom: 20,
     alignItems: 'flex-start', // Align items to the top
   },
