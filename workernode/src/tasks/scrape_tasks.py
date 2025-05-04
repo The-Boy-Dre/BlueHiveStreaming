@@ -2,7 +2,7 @@
 import logging
 from src.celery_app import celery_app # Import the Celery app instance
 from src.config import settings      # Import configuration
-from src.scrapers.media_scraper import scrape_for_m3u8 # Import scraper function
+from workernode.archive._123Movies_Scraper import scrape_for_m3u8 # Import scraper function
 import asyncio # Use asyncio for the async scraper function
 
 logger = logging.getLogger(__name__) # Get celery logger
