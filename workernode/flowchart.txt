@@ -1,0 +1,129 @@
+
+
+Start([Start: User runs send_test_job.py]) --> A[send_test_job.py: Loads .env, Imports Task];
+
+A --> B{find_player_url_task.delay(aggregator_url, job_id)};
+B --> C[Redis Broker: Receives Task 1 message];
+C --> D[Celery Worker: Polls Redis, Fetches Task 1 message];
+D --> E[Worker executes: find_player_url_task (in scrape_tasks.py)];
+E --> F[Task calls: asyncio.run(find_player_url(...)) (in player_url_finder.py)];
+F --> G[player_url_finder.py: Uses Playwright];
+
+G --> H(Interact w/ Aggregator Website - e.g., 123movies);
+H --> I{Find/Click Play Button};
+I --> J{Wait for iframe#playit};
+J --> K{Extract iframe src (player_url)};
+K --> L{Return player_url to task};
+L --> M{find_player_url_task: Receives player_url};
+M --> N{Success?};
+N -- Yes --> O{extract_m3u8_task.delay(player_url, job_id)};
+
+N -- No --> P[Task Fails/Returns None];
+O --> Q[Redis Broker: Receives Task 2 message];
+Q --> R[Celery Worker: Polls Redis, Fetches Task 2 message];
+R --> S[Worker executes: extract_m3u8_task (in m3u8_extractor.py)];
+S --> T[Task calls: asyncio.run(extract_m3u8_from_player_url(...))];
+T --> U[m3u8_extractor.py: Uses Playwright];
+U --> V(Interact w/ Player Website - e.g., movuna.xyz);
+V --> W{Intercept Network Requests};
+W --> X{Find request for .m3u8};
+X --> Y{Extract .m3u8 URL};
+Y --> Z{Return .m3u8 URL to task};
+Z --> AA{extract_m3u8_task: Receives .m3u8 URL};
+AA --> BB{Success?};
+BB -- Yes --> CC[Task Succeeds, Result stored?];
+BB -- No --> DD[Task Fails/Returns None];
+P --> End([Process Ends - Failure State]);
+CC --> EndOK([Process Ends - Success State]);
+DD --> End;
+
+
+
+1. Execution Start:
+   - python send_test_job.py
+
+2. In `send_test_job.py`:
+   - Imports `uuid`, `os`, `sys`, `load_dotenv`
+   - Calls `load_dotenv()`
+   - Modifies `sys.path` to include `src/`
+   - Imports `find_player_url_task` from `src.tasks.scrape_tasks`
+   - Defines `TARGET_URL`
+   - Defines `send_job()` function
+   - Calls `send_job()` (because of `if __name__ == "__main__":`)
+   - Inside `send_job()`:
+     - Calls `find_player_url_task.delay(target_aggregator_url=TARGET_URL, job_id=...)`
+       -> This triggers the Celery task execution (handled by worker process).
+
+--------------------------------------------------------------------
+(Execution shifts to a Celery Worker Process)
+--------------------------------------------------------------------
+
+3. In `src/tasks/scrape_tasks.py` (executed by worker):
+   - Imports `asyncio`, `celery`, etc.
+   - Imports `celery_app` from `celery_app` (root level)
+   - Imports `find_player_url` function from `src.scrapers.player_url_finder`
+   - Imports `extract_m3u8_task` object from `src.tasks.m3u8_extractor` (or wherever it's defined)
+
+   - Defines `find_player_url_task(self, target_aggregator_url, job_id)` decorated with `@celery_app.task`
+   - When triggered by Celery:
+     - Calls `asyncio.run(find_player_url(target_aggregator_url))`
+       -> Calls into the scraper logic file.
+
+4. In `src/scrapers/player_url_finder.py` (called by `find_player_url_task`):
+   - Imports `asyncio`, `time`, `random`, `os`, `playwright`, `playwright_stealth`, `urlparse`
+
+   - Defines `find_player_url(target_url, proxy_config)` async function
+   - Inside `find_player_url()`:
+     - Calls Playwright functions (`async_playwright()`, `browser.launch()`, `context.new_page()`, etc.)
+     - Calls `stealth_async(page)`
+     - Calls `page.goto(...)`
+     - Calls `click_site_selectors_buttons(page, ...)` (helper function)
+       - Inside `click_site_selectors_buttons()`:
+         - Calls `page.locator(...).first`
+         - Calls `locator.wait_for(...)`
+         - Calls `locator.click(...)`
+     - Calls `page.locator(...)` for iframe
+     - Calls `iframe_locator.wait_for(...)`
+     - Calls `iframe_locator.get_attribute(...)`
+     - Returns the extracted `player_url_result` (string or None) back to `find_player_url_task`.
+
+5. Back in `src/tasks/scrape_tasks.py`:
+   - `find_player_url_task` receives the `player_url` result.
+   - If `player_url` is valid:
+     - Calls `extract_m3u8_task.delay(player_url, job_id)`
+       -> Triggers the *next* Celery task.
+   - Returns the `player_url` (or None) as the result of this task.
+
+--------------------------------------------------------------------
+(Execution potentially shifts again within the Celery Worker Process for Task 2)
+--------------------------------------------------------------------
+
+6. In `src/tasks/m3u8_extractor.py` (or wherever `extract_m3u8_task` is defined):
+   - Imports `asyncio`, `celery`, etc.
+   - Imports `celery_app`
+   - Imports `extract_m3u8_from_player_url` function (assuming it's defined here or in another scraper file)
+
+   - Defines `extract_m3u8_task(self, player_url, job_id)` decorated with `@celery_app.task`
+   - When triggered by Celery:
+     - Calls `asyncio.run(extract_m3u8_from_player_url(player_url))`
+       -> Calls into the second scraper logic.
+
+7. In `src/scrapers/m3u8_extractor_logic.py` (example location for the logic called above):
+   - Imports `asyncio`, `playwright`, `playwright_stealth`, `urllib.parse`
+   - Defines `extract_m3u8_from_player_url(player_url)` async function
+
+   - Inside `extract_m3u8_from_player_url()`:
+     - Calls Playwright functions (`async_playwright()`, `browser.launch()`, etc.)
+     - Calls `stealth_async(page)`
+     - Defines `handle_request` async function (or similar for response handling)
+     - Calls `page.on('request', handle_request)`
+     - Calls `page.goto(player_url)`
+     - Waits (e.g., `asyncio.wait_for(event.wait(), ...)` ) for `handle_request` to find the .m3u8 URL.
+     - Inside `handle_request`:
+       - Accesses `request.url`
+       - Calls `urllib.parse.unquote` if needed (e.g., for `vfs...` proxy pattern)
+     - Returns the extracted `m3u8_url_result` (string or None) back to `extract_m3u8_task`.
+
+8. Back in `src/tasks/m3u8_extractor.py`:
+   - `extract_m3u8_task` receives the `m3u8_url` result.
+   - Returns the `m3u8_url` (or None) as the final result of this task.

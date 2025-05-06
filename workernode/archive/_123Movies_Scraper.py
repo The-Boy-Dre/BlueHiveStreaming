@@ -37,7 +37,7 @@ def configure_driver(proxy_config=None):
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-infobars')
     options.add_argument('--disable-popup-blocking')
-    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-certificate-erroproject_rootrs')
     options.add_argument("--start-maximized")
 
     # More robust fingerprint evasion
