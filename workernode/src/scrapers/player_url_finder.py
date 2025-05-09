@@ -26,10 +26,10 @@ if not settings.SCRAPER_HEADLESS:
 else:
     print("[Config] Setting launch args for HEADLESS mode.")
     BROWSER_LAUNCH_ARGS = [
-        #'--no-sandbox',
-       # '--disable-dev-shm-usage',
-       # '--disable-gpu',
-        #'--disable-blink-features=AutomationControlled',
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-blink-features=AutomationControlled',
     ]
 
 # Timeout constants
@@ -190,7 +190,7 @@ async def find_player_url(target_url: str) -> str | None:
 
             #! --- Launch Browser --------------------------------------------------------------------------------------------------------------
             print(f"{log_prefix} Launching browser (Headless: {settings.SCRAPER_HEADLESS})...")
-            browser = await p.chromium.launch(
+            browser = await p.firefox.launch(
                 headless=os.getenv("HEADLESS_MODE", "true").lower() == "true",  # Use settings value
                 args=browser_args,
                 proxy=proxy_details_pw, # Pass prepared proxy dict
@@ -230,13 +230,16 @@ async def find_player_url(target_url: str) -> str | None:
             page.set_default_navigation_timeout(page_timeout_ms)
             print(f"{log_prefix} Context and page created.")
 
+
+
+
             # Apply stealth
-            #! --------------------------------------------------------------------------------------
-            #print(f"{log_prefix} Applying stealth...")
-            #await stealth_async(page)
-            #print(f"{log_prefix} Stealth applied.")
-            print(f"{log_prefix} DEBUG: Stealth application TEMPORARILY DISABLED for testing.")
-             #! --------------------------------------------------------------------------------------
+            print(f"{log_prefix} Applying stealth...")
+            await stealth_async(page)
+            print(f"{log_prefix} Stealth applied.")
+
+
+
 
             # Navigate with better error handling
             print(f"{log_prefix} Navigating to target URL: {target_url}")
